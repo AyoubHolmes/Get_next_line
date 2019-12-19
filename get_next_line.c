@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aboulbaz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/12/19 20:26:55 by aboulbaz          #+#    #+#             */
-/*   Updated: 2019/12/19 20:26:58 by aboulbaz         ###   ########.fr       */
+/*   Created: 2019/11/25 22:38:57 by aboulbaz          #+#    #+#             */
+/*   Updated: 2019/12/19 21:41:14 by aboulbaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@ static int	extractor(char **buf, char **line, char *new_line)
 
 static int	second_case(char **tmp, char **buf, char **line)
 {
-	*line = ft_substr(*buf, 0, BUFFER_SIZE);
 	free(*tmp);
+	if (*buf && **buf != '\0')
+		*line = ft_substr(*buf, 0, ft_strlen(*buf));
 	free(*buf);
 	*buf = 0;
 	return (0);
@@ -42,7 +43,7 @@ static int	false_case(char **buf, char **tmp)
 
 int			get_next_line(int fd, char **line)
 {
-	static char		*buf[10240];
+	static char		*buf;
 	char			*tmp;
 	char			*p;
 	char			*new_line;
@@ -50,20 +51,20 @@ int			get_next_line(int fd, char **line)
 
 	if (BUFFER_SIZE < 0 || !line)
 		return (-1);
-	if ((new_line = ft_strchr(buf[fd], '\n')))
-		return (extractor(&buf[fd], line, new_line));
+	if ((new_line = ft_strchr(buf, '\n')))
+		return (extractor(&buf, line, new_line));
 	if (!(tmp = (char*)malloc(BUFFER_SIZE + 1)))
 		return (-1);
 	if ((i = read(fd, tmp, BUFFER_SIZE)) > 0)
 	{
 		tmp[i] = 0;
-		p = buf[fd];
-		buf[fd] = ft_strjoin(buf[fd], tmp);
+		p = buf;
+		buf = ft_strjoin(buf, tmp);
 		free(p);
 		free(tmp);
 		return (get_next_line(fd, line));
 	}
 	if (i == 0)
-		return (second_case(&tmp, &buf[fd], line));
-	return (false_case(&buf[fd], &tmp));
+		return (second_case(&tmp, &buf, line));
+	return (false_case(&buf, &tmp));
 }
