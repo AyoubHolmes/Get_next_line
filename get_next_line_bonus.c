@@ -25,7 +25,8 @@ static int	extractor(char **buf, char **line, char *new_line)
 
 static int	second_case(char **tmp, char **buf, char **line)
 {
-	*line = ft_substr(*buf, 0, BUFFER_SIZE);
+	if(*buf && **buf != '\0')
+		*line = ft_substr(*buf, 0, ft_strlen(*buf));
 	free(*tmp);
 	free(*buf);
 	*buf = 0;
