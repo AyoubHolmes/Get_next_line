@@ -45,6 +45,8 @@ char		*ft_substr(char const *src, unsigned int start, size_t n)
 	size_t	len;
 
 	i = 0;
+	if (!src)
+		return (ft_strjoin("", ""));
 	len = ft_strlen(src + start);
 	if (n > len)
 		n = len;
